@@ -32,7 +32,7 @@ const getTipoServicio = async (req, res) => {
 };
 
 const CreateTipoServicio = async (req, res) => {
-  const { nombre, descripcion } = req.body;
+  const { nombre } = req.body;
 
   try {
     const newTipoServicio = await db.tipo_servicio.create({
@@ -63,7 +63,7 @@ const CreateTipoServicio = async (req, res) => {
  const deleteTipoServicio = async (req, res) => {
   try {
     const { id } = req.params;
-    await tipo_servicio.destroy({
+    await db.tipo_servicio.destroy({
       where: {
         id: id,
       },
