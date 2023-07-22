@@ -1,19 +1,22 @@
 const tipo_servicio = require("../models/tipo_servicio");
+const db = require("../models/");
 
 
-export const getTipoServicios = async (req, res) => {
+
+const getTipoServicios = async (req, res) => {
   try {
-    const tipoServicios = await tipo_servicio.findAll();
-    res.json(tipoServicios);
+    // const tipoServicios = await tipo_servicio.findAll();
+    const tipoServicio = await db.tipo_servicio.findAll();
+    res.json(tipoServicio);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getTipoServicio = async (req, res) => {
+const getTipoServicio = async (req, res) => {
   try {
     const { id } = req.params;
-    const tipoServicios = await tipo_servicio.findOne({
+    const tipoServicios = await db.tipo_servicio.findOne({
       where: {
         id: id,
       },
@@ -28,12 +31,12 @@ export const getTipoServicio = async (req, res) => {
   }
 };
 
-export const CreateTipoServicio= async (req, res) => {
+const CreateTipoServicio = async (req, res) => {
   const { nombre, descripcion } = req.body;
 
   try {
-    const newTipoServicio = await tipo_servicio.create({
-      nombre,     
+    const newTipoServicio = await db.tipo_servicio.create({
+      nombre,
     });
 
     res.json(newTipoServicio);
@@ -42,11 +45,11 @@ export const CreateTipoServicio= async (req, res) => {
   }
 };
 
-export const updateTipoServicio = async (req, res) => {
+ const updateTipoServicio = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const tipoServicio = await tipo_servicio.findOne({
+    const tipoServicio = await db.tipo_servicio.findOne({
       where: { id },
     });
     tipo_servicio.set(req.body);
@@ -57,7 +60,7 @@ export const updateTipoServicio = async (req, res) => {
   }
 };
 
-export const deleteTipoServicio = async (req, res) => {
+ const deleteTipoServicio = async (req, res) => {
   try {
     const { id } = req.params;
     await tipo_servicio.destroy({
@@ -69,4 +72,12 @@ export const deleteTipoServicio = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  getTipoServicios,
+  getTipoServicio,
+  CreateTipoServicio,
+  updateTipoServicio,
+  deleteTipoServicio,
 };

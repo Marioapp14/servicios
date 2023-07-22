@@ -19,10 +19,11 @@ const {
 
 const router = Router();
 
-router.get("/servicio/tipo_servicios", getTipoServicios);
-router.get("/servicio/tipo_servicios/:id", getTipoServicio);
-router.post("/servicio/tipo_servicios", CreateTipoServicio);
-router.put("/servicio/tipo_servicios/:id", updateTipoServicio);
-router.delete("/servicio/tipo_servicios/:id", deleteTipoServicio);
+router.get("/servicio", getTipoServicios);
+router.get("/servicio/:id", getTipoServicio);
+router.post("/servicio/", CreateTipoServicio);
+router.put("/servicio/:id", updateTipoServicio);
+router.delete("/servicio/:id", deleteTipoServicio);
 
-export default router;
+// export default router;
+module.exports = router;

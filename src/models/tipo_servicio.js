@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'tipo_servicio',
+    timestamps: false,
+    createdAt: false, // Indica que no existe la columna createdAt
+    updatedAt: false,
+    
   });
   return tipo_servicio;
 };
