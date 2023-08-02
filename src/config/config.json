@@ -3,8 +3,9 @@
     "username": "postgres",
     "password": "admin",
     "database": "servicios",
-    "host": "localhost",
-    "dialect": "postgres"
+    "host": "loalhost",
+    "dialect": "postgres",
+    "port": "5432" 
   },
   "test": {
     "username": "root",

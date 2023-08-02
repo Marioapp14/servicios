@@ -11,14 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      servicio_reservacion.hasMany(models.reservacion, {
-        foreignKey: 'id_reservacion',
-        onDelete: 'CASCADE'
-      });
-      servicio_reservacion.hasMany(models.servicio, {
-        foreignKey: 'id_servicio',
-        onDelete: 'CASCADE'
-      });
 
     }
   }

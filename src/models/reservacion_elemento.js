@@ -10,10 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      reservacion_elemento.belongsTo(models.reservacion, {
-        foreignKey: "id_reservacion",
-        onDelete: "CASCADE",
-      });
+      
     }
   }
   reservacion_elemento.init(

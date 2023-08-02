@@ -13,22 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       
       
       // define association here
-      servicio.belongsTo(models.tipo_servicio, {
-        foreignKey: 'id_tipo',
-        onDelete: 'CASCADE'
-      });
-      servicio.belongsTo(models.estado_servicio, {
-        foreignKey: 'id_estado',
-        onDelete: 'CASCADE'
-      });
-      servicio.belongsTo(models.servicio_reservacion, {
-        foreignKey: 'id_reservacion', 
-        onDelete: 'CASCADE'
-      });
-      servicio.belongsTo(models.servicio_reservacion, {
-        foreignKey: 'id_servicio', 
-        onDelete: 'CASCADE'
-      });
       
     }
   }

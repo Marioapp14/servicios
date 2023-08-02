@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+
+const {sequelize} = require('../libs/sequelize');
 module.exports = (sequelize, DataTypes) => {
   class estado_reservacion extends Model {
     /**
@@ -12,10 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-       estado_reservacion.hasMany(models.reservacion, {
-        foreignKey: 'id_estado',
-        onDelete: 'CASCADE'
-      });
+       
     }
   }
   estado_reservacion.init({

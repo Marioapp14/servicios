@@ -12,10 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
            
         // define association here
-        tipo_servicio.hasMany(models.servicio_reservacion, {
-          foreignKey: 'id_tipo',
-          onDelete: 'CASCADE'
-        });
+  
     }
   }
   tipo_servicio.init({
