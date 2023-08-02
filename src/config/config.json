@@ -3,7 +3,7 @@
     "username": "postgres",
     "password": "admin",
     "database": "servicios",
-    "host": "loalhost",
+    "host": "localhost",
     "dialect": "postgres",
     "port": "5432" 
   },

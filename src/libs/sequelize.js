@@ -7,17 +7,17 @@ const USER = encodeURIComponent(config.dbUser);
 const PASSWORD = encodeURIComponent(config.dbPassword);
 const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
 
-var sequelize = new Sequelize(URI,{
+// var sequelize = new Sequelize(URI,{
 
 
-    dialect: 'postgres',
-    logging: false,
-});
+//     dialect: 'postgres',
+//     logging: false,
+// });
 
-sequelize.sync({ force: false }).then(() => {
-    console.log("Tablas sincronizadas");
-});
+// sequelize.sync({ force: false }).then(() => {
+//     console.log("Tablas sincronizadas");
+// });
 
 
 
-module.exports = {sequelize};
+// module.exports = {sequelize};
