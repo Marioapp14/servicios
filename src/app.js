@@ -9,6 +9,8 @@ const {
   ormErrorHandler,
 } = require("./middlewares/error.handler");
 
+
+
 const app = express();
 
 //settings
@@ -18,7 +20,9 @@ app.set("port", process.env.PORT || 3000);
 app.use(express.json()); //cada vez que se envie un dato en Json el servidor lo va a interpretar y lo guarda dentro de un req.body
 // app.use(logErrors);
 // app.use(errorHandler);
+
 //app.use(ormErrorHandler);
+
 
 const whtheList = [
   "http://localhost:4200",
@@ -26,6 +30,7 @@ const whtheList = [
   "http://localhost:3001",
   "http://localhost:3002",
 ];
+
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -38,6 +43,8 @@ const corsOptions = {
   },
   optionsSuccessStatus: 200,
 };
+
+
 app.use(cors());
 
 //routes
