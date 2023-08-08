@@ -10,12 +10,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      
+      // reservacion_elemento.belongsTo(models.reservaciones, {
+      //   foreignKey: "id",
+      //   references: {
+      //     model: "reservaciones",
+      //     key: "id",
+      //   },
+      // });
     }
   }
   reservacion_elemento.init(
     {
-      id_elemeno: DataTypes.INTEGER,
+      id_elemento: DataTypes.INTEGER,
       id_reservacion: DataTypes.INTEGER,
     },
     {

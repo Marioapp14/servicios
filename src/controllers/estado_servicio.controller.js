@@ -1,21 +1,15 @@
-
 const db = require("../models/");
 
- 
 const getEstadoServicios = async (req, res) => {
   try {
-    
-
-
     const estadoServicio = await db.estado_servicio.findAll();
     res.json(estadoServicio);
   } catch (error) {
     return res.status(500).json({ message: error.message });
-
   }
 };
 
-const getEstadoServicio = async (req, res, ) => {
+const getEstadoServicio = async (req, res) => {
   try {
     const { id } = req.params;
     const estadoServicio = await db.estado_servicio.findOne({
@@ -29,13 +23,14 @@ const getEstadoServicio = async (req, res, ) => {
         .json({ message: `No existe el estado de servicio con id ${id}` });
     res.json(estadoServicio);
   } catch (error) {
-    
-    return res.status(500).json({ message: error.message }); 
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const CreateEstadoServicio = async (req, res) => {
   const { nombre } = req.body;
+
+  console.log(req.body);
 
   try {
     const newEstadoServicio = await db.estado_servicio.create({
@@ -66,12 +61,13 @@ const updateEstadoServicio = async (req, res) => {
 const deleteEstadoServicio = async (req, res) => {
   try {
     const { id } = req.params;
-   await db.estado_servicio.destroy({
+
+    await db.estado_servicio.destroy({
       where: {
         id: id,
       },
     });
-   
+
     res.sendStatus(204);
   } catch (error) {
     return res.status(500).json({ message: error.message });

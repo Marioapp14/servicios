@@ -1,11 +1,8 @@
-const tipo_servicio = require("../models/tipo_servicio");
 const db = require("../models/");
-
-
 
 const getTipoServicios = async (req, res) => {
   try {
-    // const tipoServicios = await tipo_servicio.findAll();
+    db;
     const tipoServicio = await db.tipo_servicio.findAll();
     res.json(tipoServicio);
   } catch (error) {
@@ -45,7 +42,7 @@ const CreateTipoServicio = async (req, res) => {
   }
 };
 
- const updateTipoServicio = async (req, res) => {
+const updateTipoServicio = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -60,7 +57,7 @@ const CreateTipoServicio = async (req, res) => {
   }
 };
 
- const deleteTipoServicio = async (req, res) => {
+const deleteTipoServicio = async (req, res) => {
   try {
     const { id } = req.params;
     await db.tipo_servicio.destroy({
