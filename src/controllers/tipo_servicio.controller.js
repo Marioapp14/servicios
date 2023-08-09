@@ -2,7 +2,6 @@ const db = require("../models/");
 
 const getTipoServicios = async (req, res) => {
   try {
-    db;
     const tipoServicio = await db.tipo_servicio.findAll();
     res.json(tipoServicio);
   } catch (error) {
@@ -49,8 +48,8 @@ const updateTipoServicio = async (req, res) => {
     const tipoServicio = await db.tipo_servicio.findOne({
       where: { id },
     });
-    tipo_servicio.set(req.body);
-    await tipo_servicio.save();
+    tipoServicio.set(req.body);
+    await tipoServicio.save();
     return res.json(tipoServicio);
   } catch (error) {
     return res.status(500).json({ message: error.message });
