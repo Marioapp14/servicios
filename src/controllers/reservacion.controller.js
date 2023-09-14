@@ -2,7 +2,15 @@ const db = require("../models");
 
 const getReservaciones = async (req, res) => {
   try {
-    const servicio = await db.reservaciones.findAll({});
+    const servicio = await db.reservaciones.findAll({
+      include: [
+        {
+          model: db.estados_reservaciones,
+          as: "estado_reservacion",
+          attributes: ["nombre"],
+        },
+      ],
+    });
     res.json(servicio);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -28,13 +36,35 @@ const getReservacion = async (req, res) => {
 };
 
 const CreateReservacion = async (req, res) => {
-  const { fecha_inicio, fecha_fin, id_estado_reservacion } = req.body;
+  const {
+    id_servicio = 1,
+    id_solicitante,
+    id_estado_reservacion = 1,
+    id_elemento,
+    observacion,
+  } = req.body;
 
   try {
+    // Realizar la inserción en la tabla principal
     const newReservacion = await db.reservaciones.create({
-      fecha_inicio,
-      fechafin: fecha_fin || null,
+      fecha_inicio: new Date(),
+      id_estado_reservacion: id_estado_reservacion,
+      id_solicitante: id_solicitante,
+      fecha_fin: null,
       id_estado_reservacion,
+      observacion: observacion || null,
+    });
+
+    // Realizar la inserción en la tabla intermedia
+    const newreservacion_elemento = await db.reservacion_elemento.create({
+      id_reservacion: newReservacion.id,
+      id_elemento,
+    });
+
+    // Realizar la inserción en la tabla servicio_reservacion
+    const newServicioReservacion = await db.servicio_reservacion.create({
+      id_reservacion: newReservacion.id,
+      id_servicio: id_servicio,
     });
 
     res.json(newReservacion);
@@ -50,7 +80,19 @@ const updateReservacion = async (req, res) => {
     const reservacion = await db.reservaciones.findOne({
       where: { id },
     });
-    reservacion.set(req.body);
+
+    if (!reservacion) {
+      return res
+        .status(404)
+        .json({ message: `No existe el servicio con id ${id}` });
+    }
+    await db.reservaciones.update(
+      { id_estado_reservacion: 4 },
+      {
+        where: { id },
+      }
+    );
+
     await reservacion.save();
     return res.json(reservacion);
   } catch (error) {

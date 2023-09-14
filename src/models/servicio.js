@@ -10,34 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       servicio.belongsTo(models.tipo_servicio, {
-        foreignKey: "id",
-        references: {
-          model: "tipo_servicio",
-          key: "id",
-        },
+        foreignKey: "id_tipo",
       });
       servicio.belongsTo(models.estado_servicio, {
-        foreignKey: "id",
-        references: {
-          model: "estado_servicio",
-          key: "id",
-        },
+        foreignKey: "id_estado_servicio",
       });
-
-      // servicio.belongsTo(models.servicio_reservacion, {
-      //   foreignKey: "id",
-      //   references: {
-      //     model: "servicio_reservacion",
-      //     key: "id_servicio",
-      //   },
-
-      //   targetKey: "id",
-      // });
     }
   }
   servicio.init(
     {
-      id_solicitante: DataTypes.INTEGER,
       descripcion: DataTypes.STRING,
       id_tipo: DataTypes.INTEGER,
       id_estado_servicio: DataTypes.INTEGER,

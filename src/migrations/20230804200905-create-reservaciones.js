@@ -11,7 +11,10 @@ module.exports = {
         unique: true,
       },
       fecha_inicio: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATE,    
+      },
+      id_solicitante: {
+        type: Sequelize.INTEGER,
       },
       fecha_fin: {
         type: Sequelize.DATE,

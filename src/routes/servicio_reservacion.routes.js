@@ -16,5 +16,4 @@ router.post("/servicio_reservacion/", CreateServicioReservacion);
 router.put("/servicio_reservacion/:id", updateServicioReservacion);
 router.delete("/servicio_reservacion/:id", deleteServicioReservacion);
 
-// export default router;
 module.exports = router;

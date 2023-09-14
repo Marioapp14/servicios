@@ -1,19 +1,44 @@
 const db = require("../models");
+const Op = require('sequelize');
 
 const getServicios = async (req, res) => {
   try {
-    const Servicio = await db.servicio.findAll({
+    // obtiene los parametros de la url para la paginacion de los servicios
+    const { limit, offset, tipo_servicio } = req.query;
+
+    // consulta a la base de datos para obtener todos los servicios con sus respectivos tipos y estados
+    const options = {
       include: [
         {
           model: db.tipo_servicio,
           attributes: ["nombre"],
+          where: {},
         },
         {
           model: db.estado_servicio,
           attributes: ["nombre"],
+          where: {
+            id: {
+              [Op.ne]: 4,
+            }
+          }
         },
       ],
-    });
+    };
+
+    if (limit && offset) {
+      options.limit = limit;
+      options.offset = offset;
+    }
+
+    if (tipo_servicio) {
+      options.where = {
+        id_tipo: tipo_servicio,
+      };
+    }
+
+    const Servicio = await db.servicio.findAll(options);
+
     res.json(Servicio);
   } catch (error) {
     return res.status(500).json({ message: error.message });

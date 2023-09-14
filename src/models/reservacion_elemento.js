@@ -9,14 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-
-      // reservacion_elemento.belongsTo(models.reservaciones, {
-      //   foreignKey: "id",
-      //   references: {
-      //     model: "reservaciones",
-      //     key: "id",
-      //   },
-      // });
     }
   }
   reservacion_elemento.init(

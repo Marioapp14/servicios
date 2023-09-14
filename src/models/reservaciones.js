@@ -9,21 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       reservaciones.belongsTo(models.estado_reservacion, {
-        foreignKey: "id",
-        references: {
-          model: "estado_reservacion",
-          key: "id",
-        },
+        foreignKey: "id_estado_reservacion",
       });
-
-      // reservaciones.belongsTo(models.servicio_reservacion, {
-      //   foreignKey: "id",
-      //   references: {
-      //     model: "servicio_reservacion",
-      //     key: "id_reservacion",
-      //   },
-      //   targetKey: "id",
-      // });
 
       reservaciones.hasMany(models.reservacion_elemento, {
         foreignKey: "id_reservacion",
@@ -33,10 +20,12 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+    
   }
   reservaciones.init(
     {
       fecha_inicio: DataTypes.DATE,
+      id_solicitante: DataTypes.INTEGER,
       fecha_fin: DataTypes.DATE,
       id_estado_reservacion: DataTypes.INTEGER,
     },

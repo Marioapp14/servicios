@@ -11,10 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       tipo_servicio.hasMany(models.servicio, {
         foreignKey: "id_tipo",
-        references: {
-          model: "servicio",
-          key: "id_tipo",
-        },
+        sourceKey: "id", // Clave primaria de tipo_servicio
       });
     }
   }
@@ -26,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "tipo_servicio",
       timestamps: false,
-      createdAt: false, // Indica que no existe la columna createdAt
+      createdAt: false,
       updatedAt: false,
     }
   );

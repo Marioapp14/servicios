@@ -10,9 +10,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         unique: true,
       },
-      id_solicitante: {
-        type: Sequelize.INTEGER,
-      },
       descripcion: {
         type: Sequelize.STRING,
       },
