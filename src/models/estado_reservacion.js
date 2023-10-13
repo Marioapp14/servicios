@@ -1,5 +1,7 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class estado_reservacion extends Model {
     /**
@@ -8,22 +10,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      estado_reservacion.hasMany(models.reservaciones, {
-        foreignKey: "id_estado_reservacion",
-      });
+      // define association here
     }
   }
-  estado_reservacion.init(
-    {
-      nombre: DataTypes.STRING,
-    },
-    {
-      sequelize,
-      modelName: "estado_reservacion",
-      timestamps: false,
-      createdAt: false, // Indica que no existe la columna createdAt
-      updatedAt: false,
-    }
-  );
+  estado_reservacion.init({
+    nombre: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'estado_reservacion',
+    timestamps: false,
+    updatedAt: false,
+    createdAt: false,
+  });
   return estado_reservacion;
 };

@@ -1,30 +1,29 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("reservaciones", {
+    await queryInterface.createTable('reservacions', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
-        unique: true,
+        type: Sequelize.INTEGER
       },
       fecha_inicio: {
-        type: Sequelize.DATE,    
+        type: Sequelize.DATE
       },
       id_solicitante: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       fecha_fin: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
-      id_estado_reservacion: {
-        type: Sequelize.INTEGER,
+      observacion: {
+        type: Sequelize.STRING
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("reservaciones");
-  },
+    await queryInterface.dropTable('reservacions');
+  }
 };

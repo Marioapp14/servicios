@@ -2,16 +2,69 @@ const db = require("../models");
 
 const getReservaciones = async (req, res) => {
   try {
-    const servicio = await db.reservaciones.findAll({
+    const reservaciones = await db.reservacion.findAll({
+      attributes: ["id", "fecha_inicio", "fecha_fin", "observacion"],
+    });
+    res.json(reservaciones);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getPrestamos = async (req, res) => {
+  try {
+    const { limit = 10, offset = 0 } = req.query;
+
+    const prestamos = await db.reservacion.findAll({
       include: [
         {
-          model: db.estados_reservaciones,
-          as: "estado_reservacion",
+          model: db.estado_reservacion,
           attributes: ["nombre"],
         },
+        {
+          model: db.reservacion_elemento,
+          attributes: ["id_elemento"],
+        },
       ],
+      where: {
+        id_estado_reservacion: {
+          [db.Sequelize.Op.ne]: 4,
+        },
+      },
+      limit,
+      offset,
     });
-    res.json(servicio);
+    res.json(prestamos);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+//obtener los prestamos finalizados
+
+const getPrestamosFinalizados = async (req, res) => {
+  try {
+    const { limit = 10, offset = 0 } = req.query;
+
+    const prestamos = await db.reservacion.findAll({
+      include: [
+        {
+          model: db.estado_reservacion,
+          attributes: ["nombre"],
+        },
+        {
+          model: db.reservacion_elemento,
+          attributes: ["id_elemento"],
+        },
+      ],
+      where: {
+        id_estado_reservacion: 4,
+      },
+      limit,
+      offset,
+    });
+
+    res.json(prestamos);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -20,16 +73,16 @@ const getReservaciones = async (req, res) => {
 const getReservacion = async (req, res) => {
   try {
     const { id } = req.params;
-    const servicio = await db.reservaciones.findOne({
+    const prestamo = await db.reservacion.findOne({
       where: {
         id: id,
       },
     });
-    if (!servicio)
+    if (!prestamo)
       return res
         .status(404)
-        .json({ message: `No existe el servicio con id ${id}` });
-    res.json(servicio);
+        .json({ message: `No existe el Préstamo con id ${id}` });
+    res.json(prestamo);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -42,16 +95,17 @@ const CreateReservacion = async (req, res) => {
     id_estado_reservacion = 1,
     id_elemento,
     observacion,
+    fecha_fin,
   } = req.body;
 
   try {
     // Realizar la inserción en la tabla principal
-    const newReservacion = await db.reservaciones.create({
+    const newReservacion = await db.reservacion.create({
       fecha_inicio: new Date(),
       id_estado_reservacion: id_estado_reservacion,
       id_solicitante: id_solicitante,
-      fecha_fin: null,
-      id_estado_reservacion,
+      fecha_fin: fecha_fin || null,
+      id_estado_reservacion: id_estado_reservacion,
       observacion: observacion || null,
     });
 
@@ -77,24 +131,23 @@ const updateReservacion = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const reservacion = await db.reservaciones.findOne({
+    const reservacion = await db.reservacion.findOne({
       where: { id },
     });
 
     if (!reservacion) {
       return res
         .status(404)
-        .json({ message: `No existe el servicio con id ${id}` });
+        .json({ message: `No existe el préstamo con id ${id}` });
     }
-    await db.reservaciones.update(
-      { id_estado_reservacion: 4 },
+    await db.reservacion.update(
+      { id_estado_reservacion: 4, fecha_fin: new Date() },
+
       {
         where: { id },
       }
     );
-
-    await reservacion.save();
-    return res.json(reservacion);
+    return res.status(200).json({ message: "Préstamo finalizado" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -103,7 +156,7 @@ const updateReservacion = async (req, res) => {
 const deleteReservacion = async (req, res) => {
   try {
     const { id } = req.params;
-    await db.reservaciones.destroy({
+    await db.reservacion.destroy({
       where: {
         id: id,
       },
@@ -117,6 +170,8 @@ const deleteReservacion = async (req, res) => {
 
 module.exports = {
   getReservaciones,
+  getPrestamos,
+  getPrestamosFinalizados,
   getReservacion,
   CreateReservacion,
   updateReservacion,

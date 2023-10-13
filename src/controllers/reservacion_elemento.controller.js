@@ -1,5 +1,5 @@
 const db = require("../models");
-
+const Op = require('sequelize');
 const getReservacionElementos = async (req, res) => {
   try {
     
@@ -15,13 +15,13 @@ const getReservacionElemento = async (req, res) => {
     const { id } = req.params;
     const reservacionElemento = await db.reservacion_elemento.findOne({
       where: {
-        id: id,
+        id_reservacion: id,
       },
     });
     if (!reservacionElemento)
       return res
         .status(404)
-        .json({ message: `No existe el servicio-elemento con id ${id}` });
+        .json({ message: `No existe el El elemento asociado al id ${id}` });
     res.json(reservacionElemento);
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -37,7 +37,7 @@ const getServicios = async (req, res) => {
       };
     }
 
-    const Servicio = await db.servicio.findAll(options);
+    const Servicio = await db.servicio.findAll();
 
     res.json(Servicio);
   } catch (error) {

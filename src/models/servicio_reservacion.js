@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      servicio_reservacion.belongsTo(models.reservaciones, {
+       
+      servicio_reservacion.belongsTo(models.reservacion, {
         foreignKey: "id_reservacion",
         references: {
           model: "reservaciones",
@@ -22,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       });
+
     }
   }
   servicio_reservacion.init(
@@ -33,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "servicio_reservacion",
       timestamps: false,
-      createdAt: false, // Indica que no existe la columna createdAt
       updatedAt: false,
+      createdAt: false,
     }
   );
   return servicio_reservacion;

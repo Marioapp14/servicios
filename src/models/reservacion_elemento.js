@@ -1,5 +1,7 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class reservacion_elemento extends Model {
     /**
@@ -11,18 +13,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  reservacion_elemento.init(
-    {
-      id_elemento: DataTypes.INTEGER,
-      id_reservacion: DataTypes.INTEGER,
-    },
-    {
-      sequelize,
-      modelName: "reservacion_elemento",
-      timestamps: false,
-      createdAt: false, // Indica que no existe la columna createdAt
-      updatedAt: false,
-    }
-  );
+  reservacion_elemento.init({
+    id_elemento: DataTypes.INTEGER,
+    id_reservacion: DataTypes.INTEGER
+  }, {
+    sequelize,
+    modelName: 'reservacion_elemento',
+    timestamps: false,
+    updatedAt: false,
+    createdAt: false,
+  });
   return reservacion_elemento;
 };

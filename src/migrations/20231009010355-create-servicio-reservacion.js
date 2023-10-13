@@ -5,13 +5,11 @@ module.exports = {
     await queryInterface.createTable("servicio_reservacions", {
       id_reservacion: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
       id_servicio: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },

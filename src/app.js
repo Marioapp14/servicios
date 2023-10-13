@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 
 const tipo_servicioRoutes = require("./routes/tipo_servicio.routes");
 const estado_servicioRoutes = require("./routes/estado_servicio.routes");
@@ -14,8 +14,6 @@ const servicio_reservacionRoutes = require("./routes/servicio_reservacion.routes
 dotenv.config();
 const app = express();
 
-
-
 //midlewares
 app.use(express.json()); //cada vez que se envie un dato en Json el servidor lo va a interpretar y lo guarda dentro de un req.body
 
@@ -25,10 +23,10 @@ app.use(cors());
 //routes
 app.use("/servicios", tipo_servicioRoutes);
 app.use("/servicios", estado_servicioRoutes);
-app.use("/servicios", estado_reservacionRoutes);
+app.use(estado_reservacionRoutes);
 app.use(servicioRoutes);
-app.use("/servicios", reservacion_elementoRoutes);
-app.use("/servicios", reservacionRoutes);
-app.use("/servicios", servicio_reservacionRoutes);
+app.use(reservacion_elementoRoutes);
+app.use(reservacionRoutes);
+app.use(servicio_reservacionRoutes);
 
 module.exports = app;
