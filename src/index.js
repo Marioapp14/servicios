@@ -7,7 +7,7 @@ async function main() {
   try {
     app.listen(port);
       db.sequelize.sync({ force: false }).then(() => {
-      console.log("Tablas sincronizadas");
+      // console.log("Tablas sincronizadas");
     });
     console.log("Server is listening on port ", port);
 
