@@ -70,6 +70,43 @@ const getPrestamosFinalizados = async (req, res) => {
   }
 };
 
+// Funcion para obtener toddas las reservaciones con servicio igual a 10
+const getReservaciones2 = async (req, res) => {
+  try {
+    const { limit = 10, offset = 0 } = req.query;
+
+    const reservaciones = await db.reservacion.findAll({
+      include: [
+        {
+          model: db.estado_reservacion,
+          attributes: ["nombre"],
+        },
+        {
+          model: db.reservacion_elemento,
+          attributes: ["id_elemento"],
+        },
+        {
+          model: db.servicio_reservacion,
+          attributes: ["id_servicio"],
+          where: {
+            id_servicio: 10,
+          },
+        },
+      ],
+      where: {
+        id_estado_reservacion: {
+          [db.Sequelize.Op.ne]: 4,
+        },
+      },
+      limit,
+      offset,
+    });
+    res.json(reservaciones);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 const getReservacion = async (req, res) => {
   try {
     const { id } = req.params;
@@ -82,7 +119,39 @@ const getReservacion = async (req, res) => {
       return res
         .status(404)
         .json({ message: `No existe el Préstamo con id ${id}` });
+
     res.json(prestamo);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Funcion para obtener el id_elemento de la tabla reservacion_elemento
+const getIdElemento = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const prestamo = await db.reservacion.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!prestamo)
+      return res
+        .status(404)
+        .json({ message: `No existe el Préstamo con id ${id}` });
+
+    // obtener el id_elemento de la tabla
+    const id_elemento = await db.reservacion_elemento.findOne({
+      where: {
+        id_reservacion: id,
+      },
+    });
+    if (!id_elemento)
+      return res
+        .status(404)
+        .json({ message: `No existe el Préstamo con id ${id}` });
+
+    res.json(id_elemento);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -91,6 +160,45 @@ const getReservacion = async (req, res) => {
 const CreateReservacion = async (req, res) => {
   const {
     id_servicio = 1,
+    id_solicitante,
+    id_estado_reservacion = 1,
+    id_elemento,
+    observacion,
+    fecha_fin,
+  } = req.body;
+
+  try {
+    // Realizar la inserción en la tabla principal
+    const newReservacion = await db.reservacion.create({
+      fecha_inicio: new Date(),
+      id_estado_reservacion: id_estado_reservacion,
+      id_solicitante: id_solicitante,
+      fecha_fin: fecha_fin || null,
+      id_estado_reservacion: id_estado_reservacion,
+      observacion: observacion || null,
+    });
+
+    // Realizar la inserción en la tabla intermedia
+    const newreservacion_elemento = await db.reservacion_elemento.create({
+      id_reservacion: newReservacion.id,
+      id_elemento,
+    });
+
+    // Realizar la inserción en la tabla servicio_reservacion
+    const newServicioReservacion = await db.servicio_reservacion.create({
+      id_reservacion: newReservacion.id,
+      id_servicio: id_servicio,
+    });
+
+    res.json(newReservacion);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const CreateReservacion2 = async (req, res) => {
+  const {
+    id_servicio = 10,
     id_solicitante,
     id_estado_reservacion = 1,
     id_elemento,
@@ -149,7 +257,9 @@ const updateReservacion = async (req, res) => {
     );
     return res.status(200).json({ message: "Préstamo finalizado" });
   } catch (error) {
-    return res.status(500).json({ message: error.message+ "error al acualizar" });
+    return res
+      .status(500)
+      .json({ message: error.message + "error al acualizar" });
   }
 };
 
@@ -176,4 +286,7 @@ module.exports = {
   CreateReservacion,
   updateReservacion,
   deleteReservacion,
+  CreateReservacion2,
+  getReservaciones2,
+  getIdElemento,
 };

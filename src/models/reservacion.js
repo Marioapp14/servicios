@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class reservacion extends Model {
     /**
@@ -16,24 +14,31 @@ module.exports = (sequelize, DataTypes) => {
 
       reservacion.hasMany(models.reservacion_elemento, {
         foreignKey: "id_reservacion",
+      });
+
+      reservacion.hasMany(models.servicio_reservacion, {
+        foreignKey: "id_reservacion",
         references: {
-          model: "reservacion_elemento",
+          model: "servicio_reservacion",
           key: "id_reservacion",
         },
       });
     }
   }
-  reservacion.init({
-    fecha_inicio: DataTypes.DATE,
-    id_solicitante: DataTypes.INTEGER,
-    fecha_fin: DataTypes.DATE,
-    observacion: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'reservacion',
-    timestamps: false,
-    updatedAt: false,
-    createdAt: false,
-  });
+  reservacion.init(
+    {
+      fecha_inicio: DataTypes.DATE,
+      id_solicitante: DataTypes.INTEGER,
+      fecha_fin: DataTypes.DATE,
+      observacion: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "reservacion",
+      timestamps: false,
+      updatedAt: false,
+      createdAt: false,
+    }
+  );
   return reservacion;
 };
