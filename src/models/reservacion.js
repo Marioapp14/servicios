@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const moment = require("moment");
 module.exports = (sequelize, DataTypes) => {
   class reservacion extends Model {
     /**
@@ -27,9 +28,27 @@ module.exports = (sequelize, DataTypes) => {
   }
   reservacion.init(
     {
-      fecha_inicio: DataTypes.DATE,
+      fecha_inicio: {
+        type: DataTypes.DATEONLY,
+        get() {
+          return moment(this.getDataValue('fecha_inicio')).format('DD-MM-YYYY');
+        },
+        set(value) {
+          this.setDataValue('fecha_inicio', value);
+        }
+      },
+      hora_inicio: DataTypes.TIME,
+      hora_fin: DataTypes.TIME,
+      fecha_fin: {
+        type: DataTypes.DATEONLY,
+        get() {
+          return moment(this.getDataValue('fecha_fin')).format('DD-MM-YYYY');
+        },
+        set(value) {
+          this.setDataValue("fecha_fin", value);
+        }
+      },
       id_solicitante: DataTypes.INTEGER,
-      fecha_fin: DataTypes.DATE,
       observacion: DataTypes.STRING,
     },
     {

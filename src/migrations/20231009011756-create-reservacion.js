@@ -10,13 +10,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       fecha_inicio: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
+      },
+      hora_inicio: {
+        type: Sequelize.TIME
+      },
+      hora_fin: {
+        type: Sequelize.TIME
+      },
+      fecha_fin: {
+        type: Sequelize.DATEONLY
       },
       id_solicitante: {
         type: Sequelize.INTEGER
-      },
-      fecha_fin: {
-        type: Sequelize.DATE
       },
       observacion: {
         type: Sequelize.STRING
