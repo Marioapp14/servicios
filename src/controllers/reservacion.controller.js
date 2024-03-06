@@ -1,5 +1,6 @@
 const db = require("../models");
 const moment = require("moment");
+const { Op } = require("sequelize");
 
 const getReservaciones = async (req, res) => {
   try {
@@ -204,73 +205,65 @@ const Reservacion = async (req, res) => {
     id_servicio = 2,
     id_solicitante,
     id_estado_reservacion = 3,
-    id_elementos, //Array de los espacios a reservar
+    id_elemento, // Un solo espacio a reservar
     observacion,
-    fecha_inicio,
+    fecha_inicio, // En formato DD-MM-YYYY
     hora_inicio,
     hora_fin,
-    fecha_fin,
   } = req.body;
 
+  // Convertir la fecha al formato ISO 8601 para las operaciones de la base de datos y moment.js
+  const fecha_inicio_ISO = fecha_inicio.split('-').reverse().join('-');
+
   try {
-    // Verificar si ya existe una reservación para los elementos y la fecha/hora especificados
-    const existingReservacion = await Promise.all(
-      id_elementos.map(async (id_elemento) => {
-        return await db.reservacion_elemento.findOne({
-          include: [
-            {
-              model: db.reservacion,
-              where: {
-                fecha_inicio: fecha_inicio,
-                hora_inicio: {
-                  [Op.lt]: hora_fin,
-                },
-                hora_fin: {
-                  [Op.gt]: hora_inicio,
-                },
-              },
-            },
-          ],
+    // Verificar si ya existe una reservación para el elemento y la fecha/hora especificados
+    const existingReservacion = await db.reservacion.findOne({
+      include: [
+        {
+          model: db.reservacion_elemento,
           where: {
             id_elemento: id_elemento,
           },
-        });
-      })
-    );
+        },
+      ],
+      where: {
+        fecha_inicio: moment(fecha_inicio_ISO).format("YYYY-MM-DD"),
+      },
+    });
 
-    if (existingReservacion.some((reservacion) => reservacion !== null)) {
+    if (existingReservacion) {
       return res.status(400).json({
         message:
           "La hora solicitada no está disponible para la fecha especificada.",
       });
     }
-
+    console.log(existingReservacion);
     // Realizar la inserción en la tabla principal
     const newReservacion = await db.reservacion.create({
-      fecha_inicio: fecha_inicio,
-      hora_inicio: hora_inicio,
-      hora_fin: hora_fin,
+      fecha_inicio: moment(fecha_inicio_ISO).format("YYYY-MM-DD"), // Convertir la fecha al formato de la base de datos
+      hora_inicio: moment().hours(hora_inicio).minutes(0).seconds(0).format("HH:mm:ss"),
+      hora_fin: moment().hours(hora_fin).minutes(0).seconds(0).format("HH:mm:ss"),
       id_estado_reservacion: id_estado_reservacion,
       id_solicitante: id_solicitante,
-      fecha_fin: fecha_fin || null,
+      fecha_fin: null,
       observacion: observacion,
     });
 
-    // Realizar la inserción en la tabla intermedia para cada elemento
-    const reservacionElementos = await Promise.all(
-      id_elementos.map(async (id_elemento) => {
-        return await db.reservacion_elemento.create({
-          id_reservacion: newReservacion.id,
-          id_elemento,
-        });
-      })
-    );
+    console.log(newReservacion);
+    // Realizar la inserción en la tabla intermedia para el elemento
+    const reservacionElemento = await db.reservacion_elemento.create({
+      id_reservacion: newReservacion.id,
+      id_elemento,
+    });
 
     // Realizar la inserción en la tabla servicio_reservacion
     const newServicioReservacion = await db.servicio_reservacion.create({
       id_reservacion: newReservacion.id,
       id_servicio: id_servicio,
     });
+
+    // Convertir la fecha de vuelta al formato DD-MM-YYYY para la salida
+    newReservacion.fecha_inicio = fecha_inicio;
 
     res.json(newReservacion);
   } catch (error) {
@@ -335,59 +328,80 @@ const getReservasEnProceso = async (req, res) => {
   }
 };
 
+// Funcion para obtener las horas disponibles para una fecha y un elemento específicos
 const getHorasDisponibles = async (req, res) => {
   try {
     const { id_elemento, fecha } = req.query;
 
     // Validar los datos de entrada
     if (!id_elemento || !fecha) {
-      return res.status(400).json({ message: 'Se requiere id_elemento y fecha.' });
+      return res
+        .status(400)
+        .json({ message: "Se requiere id_elemento y fecha." });
     }
-
-    let horasInicioDisponibles = Array.from({ length: 16 }, (_, i) => i + 6);
-    let horasFinDisponibles = Array.from({ length: 16 }, (_, i) => i + 7);
 
     // Obtener las reservaciones para el elemento en la fecha especificada
     let reservaciones;
     try {
       reservaciones = await db.reservacion.findAll({
-        include: [
-          {
-            model: db.reservacion_elemento,
-            where: { id_elemento: id_elemento },
-          },
-        ],
+        attributes: ['hora_inicio', 'hora_fin'], // Seleccionar solo las horas de inicio y fin
+        include: [{
+          model: db.estado_reservacion,
+          where: { id: [1, 6] }, // Filtrar por los ID de los estados "Activa" o "Aceptada"
+        }],
+        include: [{
+          model: db.reservacion_elemento,
+          where: { id_elemento: id_elemento },
+        }],
         where: {
-          fecha_inicio: moment(fecha, "DD-MM-YYYY").format("YYYY-MM-DD"), // Convertir la fecha al formato de la base de datos
+          fecha_inicio: fecha, // No es necesario formatear la fecha aquí si ya está en el formato correcto en la base de datos
+          id_estado_reservacion: {
+            [Op.in]: [1, 6]
+          },
         },
         order: [["hora_inicio", "ASC"]], // Ordenar las reservaciones por hora de inicio
       });
     } catch (error) {
-      return res.status(500).json({ message: 'Error al obtener las reservaciones.' });
+      return res
+        .status(500)
+        .json({ message: "Error al obtener las reservaciones." });
     }
 
-    // Para cada reservación, eliminar las horas que están dentro del rango de la reservación de las horas disponibles
-    reservaciones.forEach((reservacion) => {
-      const horaInicioReservacion = moment(
-        reservacion.hora_inicio,
-        "HH:mm:ss"
-      ).hours();
-      const horaFinReservacion = moment(
-        reservacion.hora_fin,
-        "HH:mm:ss"
-      ).hours();
-      horasInicioDisponibles = horasInicioDisponibles.filter(hora => hora < horaInicioReservacion || hora >= horaFinReservacion);
-      horasFinDisponibles = horasFinDisponibles.filter(hora => hora <= horaInicioReservacion || hora > horaFinReservacion);
+    // Crear un conjunto de horas reservadas
+    const horasReservadas = new Set();
+    const horasInicioReservadas = new Set();
+    const horasFinReservadas = new Set();
+
+    reservaciones.forEach(reservacion => {
+      const horaInicio = moment(reservacion.hora_inicio, "HH:mm:ss").hours();
+      const horaFin = moment(reservacion.hora_fin, "HH:mm:ss").hours();
+
+      for (let i = horaInicio; i < horaFin; i++) {
+        horasReservadas.add(i);
+      }
+
+      horasInicioReservadas.add(horaInicio);
+      horasFinReservadas.add(horaFin);
     });
 
-    // Asegurarse de que cada hora de fin disponible es al menos una hora después de una hora de inicio disponible
-    horasFinDisponibles = horasFinDisponibles.filter(horaFin => horasInicioDisponibles.some(horaInicio => horaInicio < horaFin));
+    // Crear una lista de todas las horas posibles
+    let horasInicioDisponibles = Array.from({ length: 16 }, (_, i) => i + 6);
+    let horasFinDisponibles = Array.from({ length: 16 }, (_, i) => i + 7);
+
+    // Eliminar las horas reservadas de las listas de horas disponibles
+    horasInicioDisponibles = horasInicioDisponibles.filter((hora) => !horasReservadas.has(hora));
+    horasFinDisponibles = horasFinDisponibles.filter((horaFin) => {
+      return !horasReservadas.has(horaFin) && !horasInicioReservadas.has(horaFin) && !horasFinReservadas.has(horaFin);
+    });
 
     res.status(200).json({ horasInicioDisponibles, horasFinDisponibles });
   } catch (error) {
-    return res.status(500).json({ message: 'Error inesperado.' });
+    return res.status(500).json({ message: "Error inesperado." });
   }
 };
+
+
+
 
 // funcion para finalizar un prestamo
 const updateReservacion = async (req, res) => {
