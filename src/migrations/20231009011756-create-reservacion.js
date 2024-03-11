@@ -27,6 +27,12 @@ module.exports = {
       observacion: {
         type: Sequelize.STRING
       },
+      realizado_por: {
+        type: Sequelize.STRING
+      },
+      finalizado_por: {
+        type: Sequelize.STRING
+      },
     });
   },
   async down(queryInterface, Sequelize) {

@@ -38,6 +38,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_solicitante: DataTypes.INTEGER,
       observacion: DataTypes.STRING,
+      realizado_por: DataTypes.STRING,
+      finalizado_por: DataTypes.STRING,
     },
     {
       sequelize,
